@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Notes</title>
+</head>
+<body>
+    <h2> notes from mon 6-16-2025 meeting </h2>
+        - <s> write a script to grab meta data for 200 </s> <br>
+        - <s> hist of age distributon </s> (then try making scatterplots of age vs something)  <br>
+        - <s> figure what the variable names mean</s> [see <a href = "https://facebookresearch.github.io/projectaria_tools/docs/open_datasets/dataset_explorer/dataset_explorer_filters"> link </a>] <br>
+        - non metadata field to download and see what you can do with it <br>
+        - <s>write code to find the number of unique characters in the dataset</s> <br>
+        - aight so there are over <a href="https://github.com/facebookresearch/nymeria_dataset"> 1200 sequences in the dataset</a>, 
+            so that would explain 264, (i only have 236 unique subjects, not sure why, also not all ppl did all the acts)
+            they probs cut some out. <br>
+        - read paper over weekend and see if they mention it. <br>
+        - recording head data and recording head data data (vrs may be easier to digest) <br>
+        - compare with each other but also with the metadata of head trajectory to see what it means <br>
+        - keep an eye on file size <br>
+        - <s> last file downloaded was act0, courtney ross. start on line 1011 with act7 of ronald guerra </s> <br> <br>
+
+    <u> check in w emily (tue jun 24 , brian bd!!) </u> <br>
+        - pitch and yaw over time for our three subjects. (could average lEFT and right eye, and also plot them separatwly) (jorge is expert in eye, will suggest readibg) <br>
+            &nbsp; &nbsp; &nbsp; &nbsp; -<s> did yaw (animated bc it's kinda noisy so it helped me track what was actually going on) </s> <br>
+            &nbsp; &nbsp; &nbsp; &nbsp; -<s> haven't finished pitch :( </s> <br> <br>
+
+    <h2> questions to ask </h2>
+        -  session uid quwestion what is that eso w metadata? like is it only 
+            <a href="https://facebookresearch.github.io/projectaria_tools/docs/data_formats/mps/mps_eye_gaze"> 
+            "within vrs file" </a> boo <br>
+        - <s> what is cpf</s> <br>
+        - why left and right yaw not same? <br>
+
+    could add concentration to pitchyaw plot, but not sure how to do that. <br>
+    
+    <u> meeting ii w emily & jorge </u>
+        - nymeria's dATA vis tools
+        - <s> zero the yaw and pitch</s>
+        - <s> 2d plot of pitch and yaw with avg yaw as x and pitch as y </s>
+        - plot pitch yaw for each subject, and then plot the average of all three subjects. <br>
+
+        - <u> unrelated</u>: the file nymeria_download_urls.json only has the data for the og 3. it has all the data, 
+            but it's still only for the og 3 <br> </ul></ul>
+            
+    <h2>🧠 Orientation & Gaze Angles </h2>
+        - left_yaw_rads_cpf, right_yaw_rads_cpf, pitch_rads_cpf: These are the yaw (horizontal rotation) and pitch (vertical rotation) angles of each eye in radians, likely in the CPF (Camera Pose Frame).
+        - The _low_ and _high_ versions (e.g. left_yaw_low_rads_cpf) probably represent confidence intervals or uncertainty bounds for those angles.
+    <h2>👁️ Eye Position in 3D Space </h2>
+        - tx_left_eye_cpf, ty_left_eye_cpf, tz_left_eye_cpf: These are the 3D coordinates (x, y, z) of the left eye in the camera pose frame.
+        - Same goes for the right eye with tx_right_eye_cpf, etc.
+    <h2>📏 Depth & Timing</h2>
+        - depth_m: Estimated depth (distance from the camera) in meters—likely where the gaze intersects with the environment.
+        - tracking_timestamp_us: Timestamp in microseconds, useful for syncing with other modalities like head trajectory or IMU data.
+    <h2>🧾 Metadata</h2>
+        - session_uid: Unique identifier for the recording session—handy for linking this data to other files like head trajectory or SLAM. <br><br>
+
+</body>
+</html>
