@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import matplotlib.animation as animation
 import os
 import json
@@ -91,10 +92,14 @@ for fake_name in get_fake_name(json_dir):
         # continue
 
 
-left_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
-right_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
+left_yaw = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
+right_yaw = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
 # avg_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
-pitch = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")    
+pitch = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
+
+seth_left_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
+seth_right_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
+seth_pitch = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
 
 
 # Merge datasets
@@ -104,16 +109,35 @@ df_combined = df_combined.rename(columns={
     "left_yaw_rads_cpf": "left_yaw"
 })
 
+seth_df_combined = seth_left_yaw
+seth_df_combined = seth_df_combined.rename(columns={
+    "tracking_timestamp_us": "seth_time",
+    "left_yaw_rads_cpf": "seth_left_yaw"
+})
+
 df_right = right_yaw
 df_right = df_right.rename(columns={
     "tracking_timestamp_us": "time",
     "right_yaw_rads_cpf": "right_yaw"
 })
 
+seth_df_right = seth_right_yaw
+seth_df_right = seth_df_right.rename(columns={
+    "tracking_timestamp_us": "seth_time",
+    "right_yaw_rads_cpf": "seth_right_yaw"
+})
+
+
 df_pitch = pitch
 df_pitch = df_pitch.rename(columns={
     "tracking_timestamp_us": "time",    
     "pitch_rads_cpf": "pitch"
+})
+
+seth_df_pitch = seth_pitch
+seth_df_pitch = seth_df_pitch.rename(columns={
+    "tracking_timestamp_us": "seth_time",
+    "pitch_rads_cpf": "seth_pitch"
 })
 
 
@@ -124,17 +148,39 @@ if "time" in df_combined.columns:
 else:
     print("No 'time' column found.")
 
+if "seth_time" in seth_df_combined.columns:
+    seth_df_combined["seth_time_sec"] = seth_df_combined["seth_time"] / 1e6
+    seth_df_right["seth_time_sec"] = seth_df_right["seth_time"] / 1e6
+    seth_df_pitch["seth_time_sec"] = seth_df_pitch["seth_time"] / 1e6
+else:
+    print("No 'seth_time' column found.")
+
 df_merged = pd.merge(df_combined, df_right[["time", "right_yaw"]], on="time", how="inner")
 df_merged["avg_yaw"] = (df_merged["left_yaw"] + df_merged["right_yaw"]) / 2
 df_pitch = df_pitch[["time", "time_sec", "pitch"]]  # ensure time columns exist
 
+########AM I BENG DUMB?##########
+seth_df_merged = pd.merge(seth_df_combined, seth_df_right[["seth_time", "seth_right_yaw"]], on="seth_time", how="inner")
+seth_df_merged["seth_avg_yaw"] = (seth_df_merged["seth_left_yaw"] + seth_df_merged["seth_right_yaw"]) / 2 
+seth_df_pitch = seth_df_pitch[["seth_time", "seth_pitch"]]  # ensure time columns exist
 
-df_active = df_combined[(df_combined["time_sec"] > 40000)]  # Filter rows between 40s and 47.4s
-df_righter = df_right[df_right["time_sec"] > 40000]
-# this line doesnt work - df_meaner = df_merged[(df_merged["time_sec"] > 47324.397634) & (df_merged["time_sec"].min()+10)]
-df_meaner = df_merged[(df_merged["time_sec"] > 47324.397634) & (df_merged["time_sec"] < 47334.397634)]
+df_active = df_combined
+df_righter = df_right
+df_meaner = df_merged
+df_tooLoud = df_pitch
+
+seth_df_active = seth_df_combined
+seth_df_righter = seth_df_right
+seth_df_meaner = seth_df_merged 
+seth_df_tooLoud = seth_df_pitch
+
+# # seth_bowman plot uh not sure why he's special
+# df_active = df_combined[(df_combined["time_sec"] > 40000)]  # Filter rows between 40s and 47.4s
+# df_righter = df_right[df_right["time_sec"] > 40000]
+# # this line doesnt work - df_meaner = df_merged[(df_merged["time_sec"] > 47324.397634) & (df_merged["time_sec"].min()+10)]
+# # df_meaner = df_merged[(df_merged["time_sec"] > 47324.397634) & (df_merged["time_sec"] < 47334.397634)]
 # df_meaner = df_merged[df_merged["time_sec"] > 40000]
-df_tooLoud = df_pitch[df_pitch["time_sec"] > 40000]
+# df_tooLoud = df_pitch[df_pitch["time_sec"] > 40000]
 
 df_pitchYaw = pd.merge(
     df_meaner[["time", "avg_yaw", "time_sec"]],
@@ -143,14 +189,36 @@ df_pitchYaw = pd.merge(
     how="inner"
 )
 
+seth_df_pitchYaw = pd.merge(
+    seth_df_meaner[["seth_time", "seth_avg_yaw", "seth_time_sec"]],
+    seth_df_pitch,
+    on="seth_time",
+    how="inner"
+)
+
 df_pitchYaw_active = df_pitchYaw
-df_pitchYaw_active["avg_yaw_zeroed"] = df_pitchYaw_active["avg_yaw"] - df_pitchYaw_active["avg_yaw"].min()
+# df_pitchYaw_active["avg_yaw_zeroed"] = df_pitchYaw_active["avg_yaw"] - df_pitchYaw_active["avg_yaw"].min()
+df_pitchYaw_active["time_sec_zeroed"] = df_pitchYaw_active["time"] - df_pitchYaw_active["time"].min()
+heat_df = df_pitchYaw_active.dropna(subset=["avg_yaw", "pitch"]) #this is for ken, paul works with df_pitchYaw_active
+
+seth_df_pitchYaw_active = seth_df_pitchYaw
+# seth_df_pitchYaw_active["seth_avg_yaw_zeroed"] = seth_df_pitchYaw_active["seth_avg_yaw"] - seth_df_pitchYaw_active["seth_avg_yaw"].min()
+seth_df_pitchYaw_active["seth_time_sec_zeroed"] = seth_df_pitchYaw_active["seth_time"] - seth_df_pitchYaw_active["seth_time"].min()
+seth_heat_df = seth_df_pitchYaw_active.dropna(subset=["seth_avg_yaw", "seth_pitch"]) #this is for seth 
+
 
 # print data in terminal
 print(df_active.head())
 print(df_righter.head())
 print(df_meaner.head())
 print(df_tooLoud.head())
+
+#print seth_bowman data
+print("seth_bowman data:")
+print(seth_df_active.head())
+print(seth_df_righter.head())
+print(seth_df_meaner.head())
+print(seth_df_tooLoud.head())
 
 # wanna plot left and right yaw over time for each subject
 # plt.figure(figsize=(8,6))
@@ -167,28 +235,108 @@ print(df_tooLoud.head())
 # plt.xlabel("Time (seconds)")
 # plt.xticks(rotation=44)  # Rotate labels if needed
 # plt.show()
+##################################
+max_x = max(heat_df["avg_yaw"].max(), seth_heat_df["seth_avg_yaw"].max())
+min_x = min(heat_df["avg_yaw"].min(), seth_heat_df["seth_avg_yaw"].min())
 
-fig, ax = plt.subplots()
-line, = ax.plot([], [], lw=2, color='palegoldenrod', label='Pitch')
-ax.set_xlim(df_pitchYaw_active["avg_yaw"].min(), df_pitchYaw_active["avg_yaw_zeroed"].max())
-ax.set_ylim(df_pitchYaw_active["pitch"].min(), df_pitchYaw_active["pitch"].max())
-ax.set_title("Pitch Over Yaw 10s (Animated)")
-ax.set_xlabel("avg yaw")
-ax.set_ylabel("Pitch (rad)") 
-ax.yaxis.label.set_color('goldenrod')
+max_y = max(heat_df["pitch"].max(), seth_heat_df["seth_pitch"].max())
+min_y = min(heat_df["pitch"].min(), seth_heat_df["seth_pitch"].min())
 
-xdata, ydata = [], []
 
-def update(frame):
-    xdata.append(df_pitchYaw_active.iloc[frame]["avg_yaw_zeroed"])
-    ydata.append(df_pitchYaw_active.iloc[frame]["pitch"])
-    line.set_data(xdata, ydata)
-    return line,
+plt.figure(figsize=(8, 6))
 
-# ani = animation.FuncAnimation(fig, update, frames=range(0, len(df_pitchYaw_active), 4), interval=4, blit=True)
-ani = animation.FuncAnimation(fig, update, frames=range(0, len(df_pitchYaw_active), 4), interval=4, blit=True)
+
+y1 = heat_df["pitch"] #amanda pitch
+y2 = seth_heat_df["seth_pitch"] #seth pitch
+
+#################################
+# # uncomment the following lines to plot a rough heatmap of pitch vs yaw for amanda and seth
+plt.hist2d(
+    heat_df["avg_yaw"],  # X-axis
+    heat_df["pitch"],           # Y-axis
+    bins=400, #resolution
+    cmap='bone_r',
+    alpha=1,  # Adjust transparency to see overlap                      
+)
+plt.colorbar(label='kenneth pitch density')  # Color bar for Amanda's data
+
+# plt.hist2d(
+#     seth_heat_df["seth_avg_yaw"],  # X-axis
+#     seth_heat_df["seth_pitch"],           # Y-axis
+#     bins=400, #resolution
+#     cmap='afmhot_r',
+#     alpha=0.6,  # Adjust transparency to see overlap                     
+# )
+# plt.colorbar(label='seth pitch density')  # Color bar for Seth's data
+
+plt.title("kenneth Yaw vs. Pitch Density - Rough Heatmap")
+
+############################
+# Uncomment the following lines to plot a smoothed heatmap
+# sns.kdeplot(
+#     x=df_pitchYaw_active["avg_yaw"],
+#     y=seth_df_pitchYaw_active["seth_pitch"],
+#     fill=True,
+#     cmap="Blues",
+#     thresh=0.05,
+#     levels=100,
+#     alpha = 0.8,
+#     label="Seth",
+# )
+
+# sns.kdeplot(
+#     x=df_pitchYaw_active["avg_yaw"],
+#     y=df_pitchYaw_active["pitch"],
+#     fill=True,
+#     cmap="afmhot_r",
+#     thresh=0.05,
+#     levels=100,
+#     alpha = 0.4,
+#     label="Amanda"
+# )
+
+# plt.title("Amanda Yaw vs. Pitch – Smoothed Heatmap")
+############################
+
+
+# plt.xlabel("Average Yaw")
+# plt.ylabel("Pitch (radians)")
+# plt.legend(loc="upper right")
+# plt.tight_layout()
+# plt.xlim(min_x, max_x)
+# plt.ylim(min_y, max_y)
+
+
+# seth_patch = mpatches.Patch(color="blue", alpha=0.8, label="Seth")
+# amanda_patch = mpatches.Patch(color="orange", alpha=0.4, label="Amanda")  # or colormap match
+
+# plt.legend(handles=[seth_patch, amanda_patch], loc="upper right")
+
 plt.show()
-print("Animation complete.")
+
+##############################################
+# uncomment to have the animated plot of pitch over yaw
+# fig, ax = plt.subplots()
+# line, = ax.plot([], [], lw=2, color='palegoldenrod', label='Pitch')
+# ax.set_xlim(df_pitchYaw_active["avg_yaw"].min(), df_pitchYaw_active["avg_yaw_zeroed"].max())
+# ax.set_ylim(df_pitchYaw_active["pitch"].min(), df_pitchYaw_active["pitch"].max())
+# ax.set_title("Pitch Over Yaw for Amanda (Animated)")
+# ax.set_xlabel("avg yaw")
+# ax.set_ylabel("Pitch (rad)") 
+# ax.yaxis.label.set_color('goldenrod')
+
+# xdata, ydata = [], []
+
+# def update(frame):
+#     xdata.append(df_pitchYaw_active.iloc[frame]["avg_yaw_zeroed"])
+#     ydata.append(df_pitchYaw_active.iloc[frame]["pitch"])
+#     line.set_data(xdata, ydata)
+#     return line,
+
+# # ani = animation.FuncAnimation(fig, update, frames=range(0, len(df_pitchYaw_active), 4), interval=4, blit=True)
+# ani = animation.FuncAnimation(fig, update, frames=range(0, len(df_pitchYaw_active), 4), interval=4, blit=True)
+# plt.show()
+# print("Animation complete.")
 
 ################################################################################
 ## Uncomment the following lines to plot average yaw
