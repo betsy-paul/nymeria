@@ -10,6 +10,7 @@ from collections import defaultdict
 import numpy as np
 from scipy.stats import gaussian_kde
 import statistics
+from scipy.ndimage import gaussian_filter
 
 
 
@@ -380,88 +381,88 @@ for script in combined_df["script"].unique():
         if pd.notnull(bin_key[0]) and pd.notnull(bin_key[1]):
             count_matrix[bin_key][subject] += 1
 
-    # # # creat 2d grid for plot
-    # grid = np.full((BIN_COUNT, BIN_COUNT), np.nan)
-
-    # for (i, j), subject_counts in count_matrix.items():
-    #     counts = list(subject_counts.values())
-    #     total_bin_count = sum(counts)
-
-    #     if total_bin_count < 4:
-    #         grid[j, i] = np.nan  # Optional: explicitly mark sparse bins
-    #         continue
-
-    #     if len(counts) > 1:
-    #         grid[j, i] = np.log(np.var(counts) + 0.001)
-    #     else:
-    #         grid[j, i] = 0  # Or np.nan if you want to ignore bins with a single subject
-
-    # plt.figure(figsize=(10, 8))
-    # plt.imshow(
-    #     grid,
-    #     origin='lower',
-    #     extent=[yaw_bins.min(), yaw_bins.max(), pitch_bins.min(), pitch_bins.max()],
-    #     cmap="afmhot_r",
-    #     aspect="auto",
-    #     interpolation="bilinear" # kinda blurs the grap
-    # )
-
-    # # plt.colorbar(label="Local Gaze Variance")
-    # plt.colorbar(label="Logged Gaze Variance")
-    # plt.title(f"Local Variance of Gaze: {script}")
-    # plt.xlabel("Average Yaw (radians)")
-    # plt.ylabel("Pitch (radians)")
-    # plt.grid(True, linestyle='--', alpha=0.5)
-    # plt.tight_layout()
-
-    # outpath = os.path.join(HEATMAP_OUTPUT_DIR, f"gaze_variance_map_{script.replace(' ', '_')}.png")
-    # plt.savefig(outpath)
-    # plt.close()
-    # print(f"📈 Saved spatial variance map for {script} → {outpath}")
-
-
-    ############## STUFF FOR THE MEAN MAPS, scratch that, MEDIAN now ###################
-    mean_grid = np.full((BIN_COUNT, BIN_COUNT), np.nan)
-    median_grid = np.full((BIN_COUNT, BIN_COUNT), np.nan)
-
-
+    # # creat 2d grid for plot
+    grid = np.full((BIN_COUNT, BIN_COUNT), np.nan)
 
     for (i, j), subject_counts in count_matrix.items():
         counts = list(subject_counts.values())
         total_bin_count = sum(counts)
 
-        unique_subject_count = len(subject_counts)
-
-        if unique_subject_count < 3: # or total_bin_count < 2:
+        if total_bin_count < 4:
+            grid[j, i] = np.nan  # Optional: explicitly mark sparse bins
             continue
 
-
-        mean_grid[j, i] = np.mean(counts)
-        median_grid[j,i] = np.median(counts)
-
-        print(f"Bin ({i},{j}) — Subject Counts: {subject_counts}")
-    filled_bins = np.count_nonzero(~np.isnan(median_grid))
-    print(f"✅ Bins with median data: {filled_bins}")
+        if len(counts) > 1:
+            grid[j, i] = np.log(np.var(counts) + 0.001)
+        else:
+            grid[j, i] = 0  # Or np.nan if you want to ignore bins with a single subject
+    
+    smoothed_grid = gaussian_filter(grid, sigma=1.0)
 
     plt.figure(figsize=(10, 8))
     plt.imshow(
-        median_grid,
+        grid,
         origin='lower',
         extent=[yaw_bins.min(), yaw_bins.max(), pitch_bins.min(), pitch_bins.max()],
         cmap="afmhot_r",
         aspect="auto",
     )
-    plt.colorbar(label="Median Gaze Frequency")
-    plt.title(f"Median Gaze Density: {script}")
+
+    # plt.colorbar(label="Local Gaze Variance")
+    plt.colorbar(label="Logged Gaze Variance")
+    plt.title(f"Local Variance of Gaze: {script}")
     plt.xlabel("Average Yaw (radians)")
     plt.ylabel("Pitch (radians)")
     plt.grid(True, linestyle='--', alpha=0.5)
     plt.tight_layout()
 
-    median_outpath = os.path.join(HEATMAP_OUTPUT_DIR, f"gaze_median_map_{script.replace(' ', '_')}.png")
-    plt.savefig(median_outpath)
+    outpath = os.path.join(HEATMAP_OUTPUT_DIR, f"gaze_variance_map_{script.replace(' ', '_')}.png")
+    plt.savefig(outpath)
     plt.close()
-    print(f"Saved median gaze map for {script} → {median_outpath}")
+    print(f"📈 Saved spatial variance map for {script} → {outpath}")
+
+
+    ############## STUFF FOR THE MEAN MAPS, scratch that, MEDIAN now ###################
+    # mean_grid = np.full((BIN_COUNT, BIN_COUNT), np.nan)
+    # median_grid = np.full((BIN_COUNT, BIN_COUNT), np.nan)
+
+
+
+    # for (i, j), subject_counts in count_matrix.items():
+    #     counts = list(subject_counts.values())
+    #     total_bin_count = sum(counts)
+
+    #     unique_subject_count = len(subject_counts)
+
+    #     if unique_subject_count < 3: # or total_bin_count < 2:
+    #         continue
+
+
+    #     mean_grid[j, i] = np.mean(counts)
+    #     median_grid[j,i] = np.median(counts)
+
+    # # filled_bins = np.count_nonzero(~np.isnan(median_grid))
+    # # print(f"✅ Bins with median data: {filled_bins}")
+
+    # plt.figure(figsize=(10, 8))
+    # plt.imshow(
+    #     median_grid,
+    #     origin='lower',
+    #     extent=[yaw_bins.min(), yaw_bins.max(), pitch_bins.min(), pitch_bins.max()],
+    #     cmap="afmhot_r",
+    #     aspect="auto",
+    # )
+    # plt.colorbar(label="Median Gaze Frequency")
+    # plt.title(f"Median Gaze Density: {script}")
+    # plt.xlabel("Average Yaw (radians)")
+    # plt.ylabel("Pitch (radians)")
+    # plt.grid(True, linestyle='--', alpha=0.5)
+    # plt.tight_layout()
+
+    # median_outpath = os.path.join(HEATMAP_OUTPUT_DIR, f"gaze_median_map_{script.replace(' ', '_')}.png")
+    # plt.savefig(median_outpath)
+    # plt.close()
+    # print(f"Saved median gaze map for {script} → {median_outpath}")
     
     ###############################
     # plt.figure(figsize=(10, 8))

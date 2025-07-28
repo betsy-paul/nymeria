@@ -92,10 +92,10 @@ for fake_name in get_fake_name(json_dir):
         # continue
 
 
-left_yaw = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
-right_yaw = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
-# avg_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
-pitch = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
+# left_yaw = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
+# right_yaw = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
+# # avg_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
+# pitch = find_and_load_eye_gaze("kenneth_fischer", zip_dir, gaze_type="personalized")
 
 seth_left_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
 seth_right_yaw = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personalized")
@@ -103,11 +103,11 @@ seth_pitch = find_and_load_eye_gaze("seth_bowman", zip_dir, gaze_type="personali
 
 
 # Merge datasets
-df_combined = left_yaw #bc left_yaw is already a list. if it was a dataframe, you could use pd.concat([df1, df2], ignore_index=True) or smth
-df_combined = df_combined.rename(columns={ 
-    "tracking_timestamp_us": "time",
-    "left_yaw_rads_cpf": "left_yaw"
-})
+# df_combined = left_yaw #bc left_yaw is already a list. if it was a dataframe, you could use pd.concat([df1, df2], ignore_index=True) or smth
+# df_combined = df_combined.rename(columns={ 
+#     "tracking_timestamp_us": "time",
+#     "left_yaw_rads_cpf": "left_yaw"
+# })
 
 seth_df_combined = seth_left_yaw
 seth_df_combined = seth_df_combined.rename(columns={
@@ -115,11 +115,11 @@ seth_df_combined = seth_df_combined.rename(columns={
     "left_yaw_rads_cpf": "seth_left_yaw"
 })
 
-df_right = right_yaw
-df_right = df_right.rename(columns={
-    "tracking_timestamp_us": "time",
-    "right_yaw_rads_cpf": "right_yaw"
-})
+# df_right = right_yaw
+# df_right = df_right.rename(columns={
+#     "tracking_timestamp_us": "time",
+#     "right_yaw_rads_cpf": "right_yaw"
+# })
 
 seth_df_right = seth_right_yaw
 seth_df_right = seth_df_right.rename(columns={
@@ -128,11 +128,11 @@ seth_df_right = seth_df_right.rename(columns={
 })
 
 
-df_pitch = pitch
-df_pitch = df_pitch.rename(columns={
-    "tracking_timestamp_us": "time",    
-    "pitch_rads_cpf": "pitch"
-})
+# df_pitch = pitch
+# df_pitch = df_pitch.rename(columns={
+#     "tracking_timestamp_us": "time",    
+#     "pitch_rads_cpf": "pitch"
+# })
 
 seth_df_pitch = seth_pitch
 seth_df_pitch = seth_df_pitch.rename(columns={
@@ -141,12 +141,12 @@ seth_df_pitch = seth_df_pitch.rename(columns={
 })
 
 
-if "time" in df_combined.columns:
-    df_combined["time_sec"] = df_combined["time"] / 1e6
-    df_right["time_sec"] = df_right["time"] / 1e6
-    df_pitch["time_sec"] = df_pitch["time"] / 1e6
-else:
-    print("No 'time' column found.")
+# if "time" in df_combined.columns:
+#     df_combined["time_sec"] = df_combined["time"] / 1e6
+#     df_right["time_sec"] = df_right["time"] / 1e6
+#     df_pitch["time_sec"] = df_pitch["time"] / 1e6
+# else:
+#     print("No 'time' column found.")
 
 if "seth_time" in seth_df_combined.columns:
     seth_df_combined["seth_time_sec"] = seth_df_combined["seth_time"] / 1e6
@@ -155,19 +155,18 @@ if "seth_time" in seth_df_combined.columns:
 else:
     print("No 'seth_time' column found.")
 
-df_merged = pd.merge(df_combined, df_right[["time", "right_yaw"]], on="time", how="inner")
-df_merged["avg_yaw"] = (df_merged["left_yaw"] + df_merged["right_yaw"]) / 2
-df_pitch = df_pitch[["time", "time_sec", "pitch"]]  # ensure time columns exist
+# df_merged = pd.merge(df_combined, df_right[["time", "right_yaw"]], on="time", how="inner")
+# df_merged["avg_yaw"] = (df_merged["left_yaw"] + df_merged["right_yaw"]) / 2
+# df_pitch = df_pitch[["time", "time_sec", "pitch"]]  # ensure time columns exist
 
-########AM I BENG DUMB?##########
 seth_df_merged = pd.merge(seth_df_combined, seth_df_right[["seth_time", "seth_right_yaw"]], on="seth_time", how="inner")
 seth_df_merged["seth_avg_yaw"] = (seth_df_merged["seth_left_yaw"] + seth_df_merged["seth_right_yaw"]) / 2 
 seth_df_pitch = seth_df_pitch[["seth_time", "seth_pitch"]]  # ensure time columns exist
 
-df_active = df_combined
-df_righter = df_right
-df_meaner = df_merged
-df_tooLoud = df_pitch
+# df_active = df_combined
+# df_righter = df_right
+# df_meaner = df_merged
+# df_tooLoud = df_pitch
 
 seth_df_active = seth_df_combined
 seth_df_righter = seth_df_right
@@ -182,12 +181,12 @@ seth_df_tooLoud = seth_df_pitch
 # df_meaner = df_merged[df_merged["time_sec"] > 40000]
 # df_tooLoud = df_pitch[df_pitch["time_sec"] > 40000]
 
-df_pitchYaw = pd.merge(
-    df_meaner[["time", "avg_yaw", "time_sec"]],
-    df_pitch,
-    on="time",
-    how="inner"
-)
+# df_pitchYaw = pd.merge(
+#     df_meaner[["time", "avg_yaw", "time_sec"]],
+#     df_pitch,
+#     on="time",
+#     how="inner"
+# )
 
 seth_df_pitchYaw = pd.merge(
     seth_df_meaner[["seth_time", "seth_avg_yaw", "seth_time_sec"]],
@@ -196,10 +195,10 @@ seth_df_pitchYaw = pd.merge(
     how="inner"
 )
 
-df_pitchYaw_active = df_pitchYaw
-# df_pitchYaw_active["avg_yaw_zeroed"] = df_pitchYaw_active["avg_yaw"] - df_pitchYaw_active["avg_yaw"].min()
-df_pitchYaw_active["time_sec_zeroed"] = df_pitchYaw_active["time"] - df_pitchYaw_active["time"].min()
-heat_df = df_pitchYaw_active.dropna(subset=["avg_yaw", "pitch"]) #this is for ken, paul works with df_pitchYaw_active
+# df_pitchYaw_active = df_pitchYaw
+# # df_pitchYaw_active["avg_yaw_zeroed"] = df_pitchYaw_active["avg_yaw"] - df_pitchYaw_active["avg_yaw"].min()
+# df_pitchYaw_active["time_sec_zeroed"] = df_pitchYaw_active["time"] - df_pitchYaw_active["time"].min()
+# heat_df = df_pitchYaw_active.dropna(subset=["avg_yaw", "pitch"]) #this is for ken, paul works with df_pitchYaw_active
 
 seth_df_pitchYaw_active = seth_df_pitchYaw
 # seth_df_pitchYaw_active["seth_avg_yaw_zeroed"] = seth_df_pitchYaw_active["seth_avg_yaw"] - seth_df_pitchYaw_active["seth_avg_yaw"].min()
@@ -208,10 +207,10 @@ seth_heat_df = seth_df_pitchYaw_active.dropna(subset=["seth_avg_yaw", "seth_pitc
 
 
 # print data in terminal
-print(df_active.head())
-print(df_righter.head())
-print(df_meaner.head())
-print(df_tooLoud.head())
+# print(df_active.head())
+# print(df_righter.head())
+# print(df_meaner.head())
+# print(df_tooLoud.head())
 
 #print seth_bowman data
 print("seth_bowman data:")
@@ -236,40 +235,40 @@ print(seth_df_tooLoud.head())
 # plt.xticks(rotation=44)  # Rotate labels if needed
 # plt.show()
 ##################################
-max_x = max(heat_df["avg_yaw"].max(), seth_heat_df["seth_avg_yaw"].max())
-min_x = min(heat_df["avg_yaw"].min(), seth_heat_df["seth_avg_yaw"].min())
+max_x = max(seth_heat_df["seth_avg_yaw"].max(), seth_heat_df["seth_avg_yaw"].max())
+min_x = min(seth_heat_df["seth_avg_yaw"].min(), seth_heat_df["seth_avg_yaw"].min())
 
-max_y = max(heat_df["pitch"].max(), seth_heat_df["seth_pitch"].max())
-min_y = min(heat_df["pitch"].min(), seth_heat_df["seth_pitch"].min())
+max_y = max(seth_heat_df["seth_pitch"].max(), seth_heat_df["seth_pitch"].max())
+min_y = min(seth_heat_df["seth_pitch"].min(), seth_heat_df["seth_pitch"].min())
 
 
 plt.figure(figsize=(8, 6))
 
 
-y1 = heat_df["pitch"] #amanda pitch
+# y1 = heat_df["pitch"] #kenneth pitch
 y2 = seth_heat_df["seth_pitch"] #seth pitch
 
 #################################
 # # uncomment the following lines to plot a rough heatmap of pitch vs yaw for amanda and seth
+# plt.hist2d(
+#     heat_df["avg_yaw"],  # X-axis
+#     heat_df["pitch"],           # Y-axis
+#     bins=400, #resolution
+#     cmap='bone_r',
+#     alpha=1,  # Adjust transparency to see overlap                      
+# )
+# plt.colorbar(label='kenneth pitch density')  # Color bar for Amanda's data
+
 plt.hist2d(
-    heat_df["avg_yaw"],  # X-axis
-    heat_df["pitch"],           # Y-axis
+    seth_heat_df["seth_avg_yaw"],  # X-axis
+    seth_heat_df["seth_pitch"],           # Y-axis
     bins=400, #resolution
     cmap='bone_r',
-    alpha=1,  # Adjust transparency to see overlap                      
+    alpha=0.6,  # Adjust transparency to see overlap                     
 )
-plt.colorbar(label='kenneth pitch density')  # Color bar for Amanda's data
+plt.colorbar(label='seth pitch density')  # Color bar for Seth's data
 
-# plt.hist2d(
-#     seth_heat_df["seth_avg_yaw"],  # X-axis
-#     seth_heat_df["seth_pitch"],           # Y-axis
-#     bins=400, #resolution
-#     cmap='afmhot_r',
-#     alpha=0.6,  # Adjust transparency to see overlap                     
-# )
-# plt.colorbar(label='seth pitch density')  # Color bar for Seth's data
-
-plt.title("kenneth Yaw vs. Pitch Density - Rough Heatmap")
+plt.title("seth Yaw vs. Pitch Density - Rough Heatmap")
 
 ############################
 # Uncomment the following lines to plot a smoothed heatmap

@@ -5,11 +5,6 @@ import seaborn as sns
 import os
 from collections import defaultdict
 
-
-# this script loads JSON files containing head trajectory data for all sujects of Nymeria, 
-# separates it into age groups, and visualizes it using a boxplot.
-
-
 # # Load JSON files
 # ages = ["young_Nymeria", "middle_Nymeria", "older_Nymeria"]
 # dataframes = {} #store values obtained in a dict
