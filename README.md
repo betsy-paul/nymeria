@@ -1,13 +1,20 @@
 # nymeria code overview - read this first
 
-Note: please be sure to download the data yourself from the nymeria dataset here: explorer.projectaria.com/nymeria and crosscheck the directory before employing this code. in addition, I recommend that you run autodownload.py and subjects.py first. 
+Note: please be sure to download the data yourself from the nymeria dataset here: explorer.projectaria.com/nymeria (or run autodownload.py on the file nymeria_allmetadata_download_urls.json) and crosscheck the directory before employing this code. for what it's worth, I really do recommend that you run autodownload.py and subjects.py first. 
 
-basic files
-*notes.html
-*notes that i took on the data and analyses i ran. might be nice to see the progression of my thoughts over time, but not much help in understanding the data.*
+non-coding files  
+**everything else/notes.html**
+notes that i took on the data and analyses i ran. might be nice to see the progression of my thoughts over time, but not much help in understanding the data.
 
-coding files
+**everything else/nymeria_allmetadata_download_urls.json**
+the urls for downloading all 1100 subjects' metadata from nymeria. you can parse through for a specific subject and click the link to download their metadata, or run autodownload.py to download all the data at once. you can also make a subset of the metadata urls and run autodownload.py on that instead. 
 
+**everything else/nymeria_download_urls.json**
+all the download links for seth, paul, and kenneth for their simon_says activity. useful for comparisons between the three while they did the same task.
+
+
+
+coding files  
 **ageBreakdown.py**
 This python file parses through a directory of metadata.json files and grabs the age group then returns a histogram displaying distribution. If using this, be sure to change the directory to the actual folder that holds these metadata files. 
 
