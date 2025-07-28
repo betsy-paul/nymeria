@@ -34,3 +34,23 @@ This looks at head trajectory across age groups by going through a directory, co
 
 **trajRecHead.py**
 This plots the head trajectory of a specific subject in the dataset. Assuming you already have the data, you will simply need to change the name of the subject whose data you wish to plot. Options to animate and overlay are included. 
+
+## a whole lotta links
+a bunch of links to aria analysis tool docs
+https://facebookresearch.github.io/projectaria_tools/docs/data_utilities
+
+https://facebookresearch.github.io/projectaria_tools/docs/data_utilities/getting_started#step-0--check-system-requirements-and-download-codebase
+
+aria docs on vrs: https://facebookresearch.github.io/projectaria_tools/docs/data_formats/aria_vrs/aria_vrs_format
+
+jupyter notebook:http://localhost:8888/doc/tree/dataprovider_quickstart_tutorial.ipynbjupyter notebook
+
+projectaria_tools/core/examples/dataprovider_quickstart_tutorial.ipynb
+
+mps visualisation: https://colab.research.google.com/github/facebookresearch/projectaria_tools/blob/1.6.0/core/examples/mps_quickstart_tutorial.ipynb
+
+vrs repo: https://github.com/facebookresearch/vrs/tree/main
+
+my nymeria repo: https://github.com/betsy-paul/nymeria
+
+some tutorials? idk tbh: https://facebookresearch.github.io/projectaria_tools/docs/data_utilities/getting_started
