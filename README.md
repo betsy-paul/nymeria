@@ -1,6 +1,5 @@
-# nymeria
+# nymeria code overview - read this first
 
-**README.md - read this first (that's this file)**
 Note: please be sure to download the data yourself from the nymeria dataset here: explorer.projectaria.com/nymeria and crosscheck the directory before employing this code. 
 
 **autodownload.py**
