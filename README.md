@@ -2,6 +2,11 @@
 
 Note: please be sure to download the data yourself from the nymeria dataset here: explorer.projectaria.com/nymeria and crosscheck the directory before employing this code. in addition, I recommend that you run autodownload.py and subjects.py first. 
 
+basic files
+*notes.html
+*notes that i took on the data and analyses i ran. might be nice to see the progression of my thoughts over time, but not much help in understanding the data.*
+
+coding files
 
 **ageBreakdown.py**
 This python file parses through a directory of metadata.json files and grabs the age group then returns a histogram displaying distribution. If using this, be sure to change the directory to the actual folder that holds these metadata files. 
