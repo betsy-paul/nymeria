@@ -1,7 +1,7 @@
 import json
 import requests
 
-with open("nymeria_1011.json", "r") as file:
+with open("nymeria_s20_download_urls.json", "r") as file:
     data = json.load(file)
 
 # Sample JSON data structure (replace with actual data loading)
@@ -28,9 +28,9 @@ sequences = data["sequences"]  # Now we safely access 'sequences'
 
 # Iterate through subjects and download metadata JSON files
 for subject_id, subject_data in sequences.items():
-    if "metadata_json" in subject_data:
-        url = subject_data["metadata_json"]["download_url"]
-        filename = subject_data["metadata_json"]["filename"]
+    if "recording_head" in subject_data:
+        url = subject_data["recording_head"]["download_url"]
+        filename = subject_data["recording_head"]["filename"]
 
         if url and filename:
             response = requests.get(url)

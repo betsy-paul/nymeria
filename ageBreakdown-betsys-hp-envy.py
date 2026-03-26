@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Define the folder containing all JSON files
-folder_path = r"C:\Users\Betsy\OneDrive\Documents\GitHub\nymeria"
+folder_path = r"C:\Users\Betsy\OneDrive\Documents\GitHub\nymeria/downloaded_metadata"
 
 
 # Initialize a list to store age group data
